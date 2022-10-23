@@ -21,14 +21,17 @@ nodeTrails = None
 blueLowerLimit = np.array([90,70,50]) # setting the blue lower limit
 blueUpperLimit = np.array([139,255,255]) # setting the blue upper limit
 
-greenLowerLimit = np.array([65,50,50]) 
-greenUpperLimit = np.array([85,255,255]) 
+greenLowerLimit = np.array([65,50,50]) # setting the blue lower limit
+greenUpperLimit = np.array([85,255,255]) # setting the blue upper limit
 
 yellowLowerLimit = np.array([14, 140, 150])
 yellowUpperLimit = np.array([24, 255, 255])
 
 pinkLowerLimit = np.array([160, 130, 90])
 pinkUpperLimit = np.array([165, 255, 255])
+
+#pinkLowerLimit = np.array([161, 140, 90])
+#pinkUpperLimit = np.array([164, 255, 255])  
 
 redLowerLimit = np.array([170, 40, 40])
 redUpperLimit = np.array([180, 255, 255])
