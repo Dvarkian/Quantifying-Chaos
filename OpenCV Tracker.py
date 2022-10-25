@@ -169,7 +169,7 @@ for recording in range(263, 275):
         #cv2.imshow('det', showNodes) # to display the blue object output
 
 
-        data = (str(recording)+","+str(n)+","+
+        data = (str(recording)+","+str(g)+","+
                 str(blueX)+","+str(blueY)+","+str(blueSize)+","+
                 str(yellowX)+","+str(yellowY)+","+str(yellowSize)+","+
                 str(pinkX)+","+str(pinkY)+","+str(pinkSize)+","+
