@@ -44,7 +44,17 @@ def interpolate(points):
         for i in range(len(points)):
             p = points[i][h]
 
-            if p > -1:
+            colour = "_"
+            p_size = -1
+            for c in header.keys():
+                if header[c] == h:
+                    colour = c.strip("X").strip("Y")
+                
+                if "Y" in c and colour in c:
+                    p_size = header[c] + 1
+                    
+
+            if p > -1 and int(points[i][p_size]) > 2000:
                 #There is values to interpolate
                 if len(missing) > 0:
                     missing.insert(0, valid)
@@ -108,6 +118,7 @@ def polarise(points):
 
 def write_points(points):
     r = open(cook_to + name, "w")
+    r.write("frame,blueX,blueY,yellowX,yellowY,pinkX,pinkY,greenX,greenY\n")
     for p in points:
         line = ""
         for h in header.values():
@@ -118,6 +129,7 @@ def write_points(points):
 
 def write_polar_points(points):
     r = open(cook_to_polar + name, "w")
+    r.write("frame,blueDist,blueAngle,yellowDist,yellowAngle,pinkDist,pinkAngle,greenDist,greenAngle\n")
     for p in points:
         line = ""
         for h in range(len(p)):
