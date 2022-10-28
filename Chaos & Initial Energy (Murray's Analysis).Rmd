@@ -105,6 +105,10 @@ str(data)
 ```
 
 ```{r}
+unique(data$InitAngle)
+```
+
+```{r}
 plot(data$GreenX, data$GreenY, cex=0.0)
 lines(data$GreenX, data$GreenY, col="dark green")
 ```
