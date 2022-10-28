@@ -1,37 +1,81 @@
 ---
 title: "Report"
 author: "Murray Jones (520487532)"
-subtitle: "Title"
 date: "University of Sydney | PHYS1902 | Lab Class X"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
   html_document:
     fig_caption: yes
     number_sections: yes
     self_contained: yes
     theme: flatly
-    toc: true
+    toc: yes
     toc_depth: 3
-    toc_float: true
+    toc_float: yes
     code_folding: hide
+subtitle: Title
 ---
 
 <br>
 
-## Abstract:
+## Introduction:
 
-<br>
+Clearly state the aim/s and/or hypotheses of your experiment\
+o Make predictions for what you expect to see in the experiment,\
+i.e., state your hypothesis\
+ Refer to your measurable variables consistent with later analysis\
+ \~1-2 sentences of text\
+ Scientific basis for study presented that reflects synthesis of research\
+ Including references to relevant journal papers and your own knowledge of \
+physics\
+ Include relevant equations and concepts\
+ Insightful context of the experiment and scientific basis\
+ What is the issue or problem your experiment addresses?\
+ 0.5 page
 
-# Full Report
+## Experimental Setup and Method:
 
-## Initial Analysis of Data Source:
+Provide a list of equipment, and variables that were measured\
+ Describe your experimental method including calculating uncertainties\
+ Include diagrams where appropriate\
+ The reader should be able to reproduce your method\
+ Bullet points are OK, but use full sentences\
+ 1-- 2 pages of text and diagram
 
-```{r}
+## Data and Results:
+
+Comment on the precision of your measurements. Indicate main sources of \
+error, clearly explain how you estimated/calculated uncertainties. \
+ Present the final form of the analysed data (e.g. final graphs, tables, bar \
+graphs, LINEST results). It should align with your aim.\
+ Include the method you used to analyse the data (e.g. I plotted these two \
+variables against each other, I used Excel to fit this trend, and so on).
+
+Don\'t forget to include units, uncertainties, and use correct number of \
+significant figures.\
+ Describe your results\
+ Include tables of data and Excel plots where appropriate\
+ Make sure all data has units and appropriate uncertainties\
+ 1-2 pages of text and diagrams
+
+## Discussion and Interpretation:
+
+Interpret the analysed data to answer the aim\
+ Comment on the validity, reliability and accuracy of the data\
+ Discuss your uncertainty analysis and sources of error.\
+ If there are discrepancies between predictions and measurements, discuss \
+these and provide plausible explanations/justifications.\
+ Any limitations of your experimental approach?\
+ Connect your results to your experiment aims/hypotheses\
+ \~ 1 page of text
+
+```{r, echo=FALSE}
 data = read.csv("allData.csv")
-
-str(data)
 ```
 
-```{r}
+```{r, echo=FALSE}
 # Account for late starts:
 
 isSameInitConds = function(is, as) {
@@ -101,11 +145,11 @@ data$AdjTime = data$Time + data$Timeshifts
 str(data)
 ```
 
-```{r}
+```{r, echo=FALSE}
 unique(data$InitAngle)
 ```
 
-```{r}
+```{r, echo=FALSE}
 data$GreenPos = data$GreenDist * data$GreenAngle
 
 run = data[data$Recording == "268", ]
@@ -121,7 +165,7 @@ lines(run2$AdjTime, run2$GreenPos, col="#11BB11")
 lines(run3$AdjTime, run3$GreenPos, col="#110011")
 ```
 
-```{r}
+```{r, echo=FALSE}
 analysedRuns = c()
 
 
@@ -210,9 +254,9 @@ for (rec in unique(data$Recording)) {
     difSet[length(difSet)+1] = sum(totalDif)
     angSet[length(angSet)+1] = unique(run1$InitAngle)
 }
+```
 
-
-par(new=F)
+```{r, echo=FALSE}
 
 energySet = sin(angSet * (3.14159 / 360))
 
@@ -222,8 +266,7 @@ difSet = difSet / 360
 
 plot(energySet, difSet, xlim=c(0,1), ylim=c(0, 12.5), cex=0.8,
      xlab="Initial Energy (J/kg/m)", 
-     ylab="Chaos over 15 seconds (m²·s)",
-     col="dark green")
+     ylab="Chaos over 15 seconds (m²·s)")
 
 
 # Uncertainty in node position:
@@ -247,11 +290,21 @@ segments(energySet-epsilon, difSet+err, energySet+epsilon, difSet+err)
 
 
 linearModelEnergyDif = lm(formula = difSet ~ 0+energySet)
-summary(linearModelEnergyDif)
+
 
 abline(linearModelEnergyDif, col="blue")
 
 ```
+
+```{r, echo=FALSE}
+summary(linearModelEnergyDif)
+```
+
+## Conclusion:
+
+Address the aim/question based on evidence from your results. \
+ Any limitations (with uncertainties) and future work\
+ A few sentences.
 
 ```{r}
 
