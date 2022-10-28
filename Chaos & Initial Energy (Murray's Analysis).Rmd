@@ -187,9 +187,13 @@ for (rec in unique(data$Recording)) {
     run2$setRun = 2
     run3$setRun = 3
     
-    run1$posDif = abs(run1$GreenPos - run2$GreenPos)
-    run2$posDif = abs(run2$GreenPos - run3$GreenPos)
-    run3$posDif = abs(run1$GreenPos - run3$GreenPos)
+    #run1$posDif = abs(run1$GreenPos - run2$GreenPos)
+    #run2$posDif = abs(run2$GreenPos - run3$GreenPos)
+    #run3$posDif = abs(run1$GreenPos - run3$GreenPos)
+    
+    run1$posDif = sqrt((run1$GreenX-run2$GreenX)^2 + (run1$GreenY-run2$GreenY)^2)
+    run2$posDif = sqrt((run2$GreenX-run3$GreenX)^2 + (run2$GreenY-run3$GreenY)^2)
+    run3$posDif = sqrt((run1$GreenX-run3$GreenX)^2 + (run1$GreenY-run3$GreenY)^2)
     
     totalDif = run1$posDif + run2$posDif + run3$posDif
     
@@ -213,19 +217,18 @@ energySet = sin(angSet * (3.14159 / 360))
 
 difSet = difSet / 1000
 
-
 #plot(angSet, difSet, xlim=c(0,180), ylim=c(0, 220000), xlab="Angle (°)", ylab="Chaos over 15 secconds (m²·s)")
 
-plot(energySet, difSet, xlim=c(0,1), ylim=c(0, 220), 
-     xlab="Initial Energy (proportion of max.)", 
+plot(energySet, difSet, xlim=c(0,1), ylim=c(0, 4.5), 
+     xlab="Initial Energy (J/kg/m)", 
      ylab="Chaos over 15 secconds (m²·s·10³)",
      col="dark green")
 
 #linearModelAngDif = lm(difSet ~ angSet)
-linearModelEnergyDif = lm(difSet ~ energySet)
+linearModelEnergyDif = lm(formula = difSet ~ 0+energySet)
 summary(linearModelEnergyDif)
 
-abline(linearModelEnergyDif)
+abline(linearModelEnergyDif, col="blue")
 #abline(predict(linearModelAngDif, newdata = list(x=0)), coef(linearModelAngDif), col='red')
 ```
 
