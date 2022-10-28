@@ -1,0 +1,52 @@
+---
+title: "Report"
+author: "Murray Jones (520487532)"
+subtitle: "Title"
+date: "University of Sydney | PHYS1902 | Lab Class X"
+output:
+  html_document:
+    fig_caption: yes
+    number_sections: yes
+    self_contained: yes
+    theme: flatly
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    code_folding: hide
+---
+
+<br>
+
+## Executive Summary:
+
+<br>
+
+# Full Report
+
+## Initial Analysis of Data Source:
+
+```{r}
+
+angleFiles = list.files(path="./cooked_data/angles", full.names=T)
+propFiles = list.files(path="./cooked_data/propogation/")
+massFiles = list.files(path="./cooked_data/weights/")
+
+data = NULL
+
+for (file in angleFiles) {
+  print(file)
+  data = rbind(data, read.csv(file))
+  
+  break
+}
+
+str(data)
+```
+
+```{r}
+
+```
+
+<br>
+
+# References
