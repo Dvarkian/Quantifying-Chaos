@@ -116,6 +116,8 @@ data$GreenPos = data$GreenDist * data$GreenAngle
 ```{r}
 
 
+
+
 run = data[data$Recording == "268", ]
 run2 = data[data$Recording == "266", ]
 run3 = data[data$Recording == "267", ]
@@ -125,6 +127,106 @@ plot(run3$AdjTime, run3$GreenPos, cex=0)
 lines(run$AdjTime, run$GreenPos, col="#114411")
 lines(run2$AdjTime, run2$GreenPos, col="#11BB11")
 lines(run3$AdjTime, run3$GreenPos, col="#110011")
+```
+
+```{r}
+analysedRuns = c()
+
+
+getSameCondRuns = function(source) {
+    
+    runs = c(source)
+    
+    #print("-------")
+    
+    for (rec in unique(data$Recording)) {
+        
+        if (rec == source) {
+            next
+        }
+        
+        if (isSameInitConds(data[data$Recording == rec, ],
+                            data[data$Recording == source, ])) {
+            
+            
+            runs[length(runs)+1] = rec
+        }
+    }
+    
+    return(runs)
+}
+
+
+difSet = c()
+angSet = c()
+
+for (rec in unique(data$Recording)) {
+    
+    if (rec %in% analysedRuns) {
+        next
+    }
+        
+    runs = getSameCondRuns(rec)
+    
+    for (runNum in runs) {
+        #print(runNum)
+        analysedRuns[length(analysedRuns)+1] = runNum
+    }
+    
+    run1 = data[data$Recording == runs[1], ]
+    run2 = data[data$Recording == runs[2], ]
+    run3 = data[data$Recording == runs[3], ]
+    
+    shortest = 120 * 15 #min(nrow(run1), nrow(run2), nrow(run3))
+    
+    run1 = head(run1, shortest)
+    run2 = head(run2, shortest)
+    run3 = head(run3, shortest)
+    
+    run1$setRun = 1
+    run2$setRun = 2
+    run3$setRun = 3
+    
+    run1$posDif = abs(run1$GreenPos - run2$GreenPos)
+    run2$posDif = abs(run2$GreenPos - run3$GreenPos)
+    run3$posDif = abs(run1$GreenPos - run3$GreenPos)
+    
+    totalDif = run1$posDif + run2$posDif + run3$posDif
+    
+    
+    
+    if (unique(run1$Type) != "angle") {
+        next
+    }
+    
+    difSet[length(difSet)+1] = sum(totalDif)
+    angSet[length(angSet)+1] = unique(run1$InitAngle)
+    
+    #plot(run1$AdjTime, totalDif)
+    
+    
+    #table(runData[1])
+}
+
+
+energySet = sin(angSet * (3.14159 / 360))
+
+difSet = difSet / 1000
+
+
+#plot(angSet, difSet, xlim=c(0,180), ylim=c(0, 220000), xlab="Angle (°)", ylab="Chaos over 15 secconds (m²·s)")
+
+plot(energySet, difSet, xlim=c(0,1), ylim=c(0, 220), 
+     xlab="Initial Energy (proportion of max.)", 
+     ylab="Chaos over 15 secconds (m²·s·10³)",
+     col="dark green")
+
+#linearModelAngDif = lm(difSet ~ angSet)
+linearModelEnergyDif = lm(difSet ~ energySet)
+summary(linearModelEnergyDif)
+
+abline(linearModelEnergyDif)
+#abline(predict(linearModelAngDif, newdata = list(x=0)), coef(linearModelAngDif), col='red')
 ```
 
 ```{r}
