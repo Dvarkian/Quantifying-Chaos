@@ -34,18 +34,97 @@ str(data)
 ```
 
 ```{r}
+# Account for late starts:
+
+
+isSameInitConds = function(is, as) {
+    
+    if (unique(is$Type)[1] == unique(as$Type)[1] &&
+        unique(is$InitAngle)[1] == unique(as$InitAngle)[1] &&
+        unique(is$AddedMass)[1] == unique(as$AddedMass)[1]) {
+        
+        return(1) # Same init conds.
+    }
+    
+    return(0) # Not same init conds.
+}
+
+# Get an on time run with same initial conditions.
+getOnTime = function(rec) {
+    badRun = data[data$Recording == rec, ]
+    
+    for (rec in unique(data$Recording)) {
+        
+        testRun = data[data$Recording == rec, ]
+        
+        if(isSameInitConds(testRun, badRun)) {
+        
+            testLate = unique(testRun$LateStart)[1]
+            
+        
+            if (testLate == 0) {
+                return(testRun)
+            }
+        }
+    }
+}
+
+
+shifts = c()
+
+for (rec in unique(data$Recording)) {
+    run = data[data$Recording == rec, ]
+    
+    late = unique(run$LateStart)[1]
+    
+    timeshift = 0
+    
+    if (late) {
+        refRun = getOnTime(rec)
+        
+        target = run$GreenAngle[1]
+    
+        closePoints = refRun[abs(refRun$GreenAngle - target) < 0.4,]
+        
+        firstPoint = head(closePoints, 1)
+    
+        timeshift = firstPoint$Time
+
+    }
+    
+    for (row in 1:nrow(run)) {
+        shifts[length(shifts)+1] = timeshift
+    }
+}
+
+data$Timeshifts = shifts
+
+data$AdjTime = data$Time + data$Timeshifts
+
+str(data)
+```
+
+```{r}
 plot(data$GreenX, data$GreenY, cex=0.0)
 lines(data$GreenX, data$GreenY, col="dark green")
 ```
 
 ```{r}
+data$GreenPos = data$GreenDist * data$GreenAngle
+```
+
+```{r}
 
 
-run = data[data$Recording == "267", ]
+run = data[data$Recording == "268", ]
+run2 = data[data$Recording == "266", ]
+run3 = data[data$Recording == "267", ]
 
 
-plot(run$Time, run$GreenAngle, cex=0.1)
-lines(run$Time, run$GreenAngle, col="dark green")
+plot(run3$AdjTime, run3$GreenPos, cex=0)
+lines(run$AdjTime, run$GreenPos, col="#114411")
+lines(run2$AdjTime, run2$GreenPos, col="#11BB11")
+lines(run3$AdjTime, run3$GreenPos, col="#110011")
 ```
 
 ```{r}
