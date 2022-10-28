@@ -31,16 +31,34 @@ angleFiles = list.files(path="./cooked_data/angles", full.names=T)
 propFiles = list.files(path="./cooked_data/propogation/")
 massFiles = list.files(path="./cooked_data/weights/")
 
+polarAngleFiles = list.files(path="./cooked_data/angles_polar", full.names=T)
+polarPropFiles = list.files(path="./cooked_data/propogation_polar", full.names=T)
+polarMassFiles = list.files(path="./cooked_data/weights_polar", full.names=T)
+
+
 data = NULL
 
-for (file in angleFiles) {
-  print(file)
+for (file in polarAngleFiles) {
+  #print(file)
   data = rbind(data, read.csv(file))
-  
-  break
 }
 
+
 str(data)
+```
+
+```{r}
+#plot(data$greenX, data$greenY, cex=0.0)
+#lines(data$greenX, data$greenY, col="dark green")
+```
+
+```{r}
+
+
+
+
+plot(data$frame, data$greenAngle, cex=0.1)
+#lines(data$frame, data$greenAngle, col="dark green")
 ```
 
 ```{r}
