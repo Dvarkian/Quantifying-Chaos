@@ -26,16 +26,13 @@ output:
 ## Initial Analysis of Data Source:
 
 ```{r}
-
 data = read.csv("allData.csv")
-
 
 str(data)
 ```
 
 ```{r}
 # Account for late starts:
-
 
 isSameInitConds = function(is, as) {
     
@@ -109,25 +106,16 @@ unique(data$InitAngle)
 ```
 
 ```{r}
-plot(data$GreenX, data$GreenY, cex=0.0)
-lines(data$GreenX, data$GreenY, col="dark green")
-```
-
-```{r}
 data$GreenPos = data$GreenDist * data$GreenAngle
-```
-
-```{r}
-
-
-
 
 run = data[data$Recording == "268", ]
 run2 = data[data$Recording == "266", ]
 run3 = data[data$Recording == "267", ]
 
 
-plot(run3$AdjTime, run3$GreenPos, cex=0)
+plot(run3$AdjTime, run3$GreenPos, cex=0,
+     xlab="Time (s)", ylab="Angular displacement (m·°)")
+
 lines(run$AdjTime, run$GreenPos, col="#114411")
 lines(run2$AdjTime, run2$GreenPos, col="#11BB11")
 lines(run3$AdjTime, run3$GreenPos, col="#110011")
@@ -164,6 +152,7 @@ getSameCondRuns = function(source) {
 difSet = c()
 angSet = c()
 
+
 for (rec in unique(data$Recording)) {
     
     if (rec %in% analysedRuns) {
@@ -173,7 +162,6 @@ for (rec in unique(data$Recording)) {
     runs = getSameCondRuns(rec)
     
     for (runNum in runs) {
-        #print(runNum)
         analysedRuns[length(analysedRuns)+1] = runNum
     }
     
@@ -190,50 +178,79 @@ for (rec in unique(data$Recording)) {
     run1$setRun = 1
     run2$setRun = 2
     run3$setRun = 3
-    
-    #run1$posDif = abs(run1$GreenPos - run2$GreenPos)
-    #run2$posDif = abs(run2$GreenPos - run3$GreenPos)
-    #run3$posDif = abs(run1$GreenPos - run3$GreenPos)
-    
+
     run1$posDif = sqrt((run1$GreenX-run2$GreenX)^2 + (run1$GreenY-run2$GreenY)^2)
     run2$posDif = sqrt((run2$GreenX-run3$GreenX)^2 + (run2$GreenY-run3$GreenY)^2)
     run3$posDif = sqrt((run1$GreenX-run3$GreenX)^2 + (run1$GreenY-run3$GreenY)^2)
     
     totalDif = run1$posDif + run2$posDif + run3$posDif
     
-    
-    
     if (unique(run1$Type) != "angle") {
         next
     }
     
+    
+    difSum = c(0)
+    
+    for (elem in totalDif) {
+        difSum[length(difSum)+1] = difSum[length(difSum)]+elem/360
+    }
+    
+    difSum = head(difSum, length(difSum)-1)
+    
+    
+    plot(run1$Time, difSum, cex=0.1, ylim=c(0, 12.5), type="l",
+         ylab="Cumulative Chaos (m²·s)", xlab="Time (s)",
+         col=rgb(unique(run1$InitAngle) / 180,
+                 0.1,
+                 1-unique(run1$InitAngle) / 180))
+    
+    par(new=T)
+    
     difSet[length(difSet)+1] = sum(totalDif)
     angSet[length(angSet)+1] = unique(run1$InitAngle)
-    
-    #plot(run1$AdjTime, totalDif)
-    
-    
-    #table(runData[1])
 }
 
 
+par(new=F)
+
 energySet = sin(angSet * (3.14159 / 360))
 
-difSet = difSet / 1000
+difSet = difSet / 360
 
 #plot(angSet, difSet, xlim=c(0,180), ylim=c(0, 220000), xlab="Angle (°)", ylab="Chaos over 15 secconds (m²·s)")
 
-plot(energySet, difSet, xlim=c(0,1), ylim=c(0, 4.5), 
+plot(energySet, difSet, xlim=c(0,1), ylim=c(0, 12.5), cex=0.8,
      xlab="Initial Energy (J/kg/m)", 
-     ylab="Chaos over 15 secconds (m²·s·10³)",
+     ylab="Chaos over 15 seconds (m²·s)",
      col="dark green")
 
-#linearModelAngDif = lm(difSet ~ angSet)
+
+# Uncertainty in node position:
+err = c()
+
+for (i in 1:length(angSet)) {
+    if (i < 4) {
+        err[i] = sin(angSet[i] * (3.14159 / 90))
+    } else {
+        err[i] = 0.3
+    }
+}
+
+
+segments(energySet, difSet-err, energySet, difSet+err)
+
+epsilon <- 0.006
+segments(energySet-epsilon, difSet-err, energySet+epsilon, difSet-err)
+segments(energySet-epsilon, difSet+err, energySet+epsilon, difSet+err)
+
+
+
 linearModelEnergyDif = lm(formula = difSet ~ 0+energySet)
 summary(linearModelEnergyDif)
 
 abline(linearModelEnergyDif, col="blue")
-#abline(predict(linearModelAngDif, newdata = list(x=0)), coef(linearModelAngDif), col='red')
+
 ```
 
 ```{r}
