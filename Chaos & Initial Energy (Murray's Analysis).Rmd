@@ -1,5 +1,5 @@
 ---
-title: "Report"
+title: "Quantifying Chaos"
 author: "Murray Jones (520487532)"
 date: "University of Sydney | PHYS1902 | Lab Class X"
 output:
@@ -22,54 +22,79 @@ subtitle: Title
 
 ## Introduction:
 
-Clearly state the aim/s and/or hypotheses of your experiment\
-o Make predictions for what you expect to see in the experiment,\
-i.e., state your hypothesis\
- Refer to your measurable variables consistent with later analysis\
- \~1-2 sentences of text\
- Scientific basis for study presented that reflects synthesis of research\
- Including references to relevant journal papers and your own knowledge of \
-physics\
- Include relevant equations and concepts\
- Insightful context of the experiment and scientific basis\
- What is the issue or problem your experiment addresses?\
- 0.5 page
+### Aim:
+
+The aim of this experiment is to determine a quantitative measure of the chaos in the motion of a triple pendulum, and use this to determine a relationship between the extent of chaos exhibited by the pendulum, and the the initial potential energy of the pendulum arm.
+
+### Hypothesis:
+
+The extent of chaos exhibited by the triple pendulum will be directly proportional to the initial energy of the pendulum.
+
+### Measurable variables:
+
+### Scientific basis:
+
+Edward Lorenz defined chaos as:
+
+> *When the present determines the future, but the approximate present does not approximately determine the future.*
+
+Based on this definition, we can conclude that the extent of chaos expressed by a system over time can be measured as the difference in paths taken by a system over multiple trials whose initial conditions are approximately the same.
+
+Double and triple pendula are classic examples of chaotic systems.
+
+Initially, all the energy of the pendulum arm is in the form of gravitational potential energy. \
+
+Refer to your measurable variables consistent with later analysis\
+\~1-2 sentences of text
+
+\
+Scientific basis for study presented that reflects synthesis of research\
+Including references to relevant journal papers and your own knowledge of\
+physics
+
+\
+Include relevant equations and concepts\
+Insightful context of the experiment and scientific basis\
+What is the issue or problem your experiment addresses?
+
+\
+0.5 page
 
 ## Experimental Setup and Method:
 
 Provide a list of equipment, and variables that were measured\
- Describe your experimental method including calculating uncertainties\
- Include diagrams where appropriate\
- The reader should be able to reproduce your method\
- Bullet points are OK, but use full sentences\
- 1-- 2 pages of text and diagram
+Describe your experimental method including calculating uncertainties\
+Include diagrams where appropriate\
+The reader should be able to reproduce your method\
+Bullet points are OK, but use full sentences\
+1-- 2 pages of text and diagram
 
 ## Data and Results:
 
-Comment on the precision of your measurements. Indicate main sources of \
-error, clearly explain how you estimated/calculated uncertainties. \
- Present the final form of the analysed data (e.g. final graphs, tables, bar \
+Comment on the precision of your measurements. Indicate main sources of\
+error, clearly explain how you estimated/calculated uncertainties.\
+Present the final form of the analysed data (e.g. final graphs, tables, bar\
 graphs, LINEST results). It should align with your aim.\
- Include the method you used to analyse the data (e.g. I plotted these two \
+Include the method you used to analyse the data (e.g. I plotted these two\
 variables against each other, I used Excel to fit this trend, and so on).
 
-Don\'t forget to include units, uncertainties, and use correct number of \
+Don't forget to include units, uncertainties, and use correct number of\
 significant figures.\
- Describe your results\
- Include tables of data and Excel plots where appropriate\
- Make sure all data has units and appropriate uncertainties\
- 1-2 pages of text and diagrams
+Describe your results\
+Include tables of data and Excel plots where appropriate\
+Make sure all data has units and appropriate uncertainties\
+1-2 pages of text and diagrams
 
 ## Discussion and Interpretation:
 
 Interpret the analysed data to answer the aim\
- Comment on the validity, reliability and accuracy of the data\
- Discuss your uncertainty analysis and sources of error.\
- If there are discrepancies between predictions and measurements, discuss \
+Comment on the validity, reliability and accuracy of the data\
+Discuss your uncertainty analysis and sources of error.\
+If there are discrepancies between predictions and measurements, discuss\
 these and provide plausible explanations/justifications.\
- Any limitations of your experimental approach?\
- Connect your results to your experiment aims/hypotheses\
- \~ 1 page of text
+Any limitations of your experimental approach?\
+Connect your results to your experiment aims/hypotheses\
+\~ 1 page of text
 
 ```{r, echo=FALSE}
 data = read.csv("allData.csv")
@@ -302,9 +327,9 @@ summary(linearModelEnergyDif)
 
 ## Conclusion:
 
-Address the aim/question based on evidence from your results. \
- Any limitations (with uncertainties) and future work\
- A few sentences.
+Address the aim/question based on evidence from your results.\
+Any limitations (with uncertainties) and future work\
+A few sentences.
 
 ```{r}
 
