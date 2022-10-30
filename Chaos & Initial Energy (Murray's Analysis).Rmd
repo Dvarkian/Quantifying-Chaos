@@ -431,7 +431,7 @@ $$
 E_0 = \sin(\frac{\theta}{2})
 $$
 
-The uncertainty $\Delta E_0$ in this initial energy is then simply $\sin(\frac{\Delta \theta}{2})$, where $\Delta \theta$ is the uncertainty in the initial angle $\theta$.
+The uncertainty $\Delta E_0$ in this initial energy is then simply $\Delta E_0 = \sin(\frac{\Delta \theta}{2})$, where $\Delta \theta$ is the uncertainty in the initial angle $\theta$.
 
 For our lower angle runs ($\theta \leq 45^{\circ}$) this uncertainty was quite significant, as the protractor we used had a secondary scale that was not in degrees, but rather mapped 180° to a value of 200. We did not realize this until the first of the 60° trials, and hence we were unsure which scale we had used for the earlier runs. After realising this, we made certain to use the degrees scale, which had half degree increments. So:
 
