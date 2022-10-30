@@ -95,9 +95,21 @@ The method used to collect data in this experiment was as follows:
 
 1.  Camera and pendulum were set up in front of blank white wall, with good lighting, such that the camera's field of view was centered on the origin node (to reduce parallax error), and the lens of the camera was placed 1.2m horizontally from the origin node, such that the whole range of motion of the pendulum was within the camera's field of view.
 
+    ```{=tex}
+    \begin{center}
+    \includegraphics[width=10cm]{images/Setup.jpg}
+    \end{center}
+    ```
+
 2.  Blue, yellow, pink, and green markers were placed on nodes 0 to 3 respectively. These colors were chosen as they stood out easily from the other colors present on the pendulum apparatus, such as the red of the arms.
 
-3.  Pendulum arm was brought to the desired initial angle, as measure using protractor, and held until all nodes were motionless.
+3.  Pendulum arm was brought to the desired initial angle (measured relative to the downwards vertical), as measure using protractor, and held until all nodes were motionless.
+
+    ```{=tex}
+    \begin{center}
+    \includegraphics[width=10cm]{images/Measuring Angles.png}
+    \end{center}
+    ```
 
 4.  Recording was started and pendulum released after a brief countdown.
 
@@ -109,11 +121,6 @@ The method used to collect data in this experiment was as follows:
 
 8.  Recordings of each run were saved, and the data analysed using the method described under *Data & Analysis.*
 
-```{=tex}
-\begin{center}
-\includegraphics[width=10cm]{images/Setup.jpg}
-\end{center}
-```
 ## Data and Results:
 
 ```{r, echo=FALSE}
@@ -122,7 +129,54 @@ data = read.csv("allData.csv")
 
 ### Tracking the nodes:
 
-Our data collection process produced approximately 10Gb of recordings. In order to extract the node position data from these
+Our data collection process produced approximately 10Gb of recordings.
+
+To extract the node position data from these recordings, we used a Python script of my own design. This script operated as follows:
+
+1.  The OpenCV python module was used to create a bit-wise HSV colour mask for each of the colored node stickers (and later, also the arms and masses).
+
+2.  The nodes selected b these masks were displayed at every frame to verify correct calibration.
+
+3.  The SciPy module was used to determine the median centers of the masks.
+
+4.  The x & y coordinates of each center, as will as the number of selected pixels, were saved to a raw data file. The value of -1 was used to indicate that a node could not be found on a particular frame. This occurred frequently when nodes were covered by other parts of the pendulum arms.
+
+Our initial dataset, recorded at 24 frames per second (FPS), had a severe amount of motion blur, as shown below.
+
+```{=tex}
+\begin{center}
+\includegraphics[width=7cm]{images/Blur.jpg}
+\end{center}
+```
+$$
+\pagebreak
+$$
+
+This made it almost impossible to track the nodes through the pendulum's faster motions. One attempt at this tracking is shown below.
+
+```{=tex}
+\begin{center}
+\includegraphics[width=10cm]{images/Blur Tracking.png}
+\end{center}
+```
+After re-recording our entire data-set at 120 FPS, the nodes were significantly easier to track, as the blur was now minimal. A successful tracking of the first 3 seconds of a 120° run is shown below:
+
+```{=tex}
+\begin{center}
+\includegraphics[width=10cm]{images/Good Tracking.png}
+\end{center}
+```
+### Cleaning the data:
+
+After running the node tracking script for a day and a half, we had successfully extracted the raw data from the videos. A second python script was then used to clean this data by:
+
+-   Averaging the origin node position over the entire run, and centering the coordinate system about this origin node.
+
+-   Normalizing the units of the coordinate system to be in SI units, instead of the pixel & frame coordinates output by the tracking script.
+
+-   Interpolating node data for times when a particular node was hidden behind other parts of the pendulum arm.
+
+-   Removing discrepancies caused by partially covered nodes, by only considering nodes where the number of pixels detected to be part of the node was above a certain threshold.
 
 ### Analyzing the data:
 

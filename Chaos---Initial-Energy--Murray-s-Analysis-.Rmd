@@ -1,0 +1,447 @@
+---
+title: "Quantifying Chaos"
+author: "Murray Jones (520487532)"
+date: "University of Sydney | PHYS1902 | Lab Class X"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_document:
+    fig_caption: yes
+    number_sections: yes
+    self_contained: yes
+    theme: flatly
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+    code_folding: hide
+subtitle: Title
+---
+
+<br>
+
+## Introduction:
+
+### Aim:
+
+The aim of this experiment is to determine a quantitative measure of the chaos in the motion of a triple pendulum, and use this to determine a relationship between the extent of chaos exhibited by the pendulum, and the the total energy of the pendulum arm.
+
+### Hypothesis:
+
+> *The extent of chaos exhibited by the triple pendulum will be directly proportional to the total energy of the pendulum at that point in time.*
+
+As the impact of frictional effects on this pendulum is very minimal, it is valid to assume that the total energy of the pendulum will remain approximately constant throughout a run with duration of \~15 seconds. Hence, as the initial energy of the pendulum arm is entirely in the form of gravitational potential energy, we can adapt the hypothesis to suit this easier to measure parameter as follows:
+
+> *The extent of chaos exhibited by the triple pendulum will be directly proportional to the initial energy of the pendulum.*
+
+### Scientific basis:
+
+Edward Lorenz defined chaos as:
+
+> ***When the present determines the future, but the approximate present does not approximately determine the future.***
+
+Based on this definition, we can conclude that the extent of chaos expressed by a system over time can be measured as the difference in paths taken by a system over multiple trials whose initial conditions are approximately the same.
+
+Consider the first four frames of a pendulum run, taken at equal intervals:
+
+```{=tex}
+\begin{center}
+\includegraphics[width=10cm]{images/A.png}
+\end{center}
+```
+We can the conduct a second run with approximate the same initial conditions, and measure the difference between the end node positions $x$ at each frame $x_n$:
+
+```{=tex}
+\begin{center}
+\includegraphics[width=10cm]{images/B.png}
+\end{center}
+```
+Hence, based of our above definition, it is valid to describe a measure of chaos for this system as:
+
+$$
+Chaos = \Delta t \cdot \sum_{k=0}^{n}{x_k}
+$$
+
+Where $\Delta t = \frac{1}{120}$ is the time between each frame.
+
+## Experimental Setup:
+
+### Equipment list:
+
+The following equipment was used in this experiment:
+
+-   Weighted triple pendulum *(shown below)*, with an arm length of 120mm, as measured between the centers of any two consecutive nodes.
+
+-   Four different brightly colored stickers.
+
+-   Sony A7C full-camera using a 24mm, f2.8 lens, at aperture f5.6. Capable of recording footage at 4K resolution, with 120 frames per second.
+
+-   Scales with 0.1g precision.
+
+-   Protractor with 0.5° precision, and a hanging bob to reference the vertical direction.
+
+-   Tape measure & meter ruler with 1mm precision.
+
+-   White paper and masking tape to cover reflective parts of pendulum *(see experimental setup diagram)*.
+
+```{=tex}
+\begin{center}
+\includegraphics[width=10cm]{images/Pend.png}
+\end{center}
+```
+### Method:
+
+The method used to collect data in this experiment was as follows:
+
+1.  Camera and pendulum were set up in front of blank white wall, with good lighting, such that the camera's field of view was centered on the origin node (to reduce parallax error), and the lens of the camera was placed 1.2m horizontally from the origin node, such that the whole range of motion of the pendulum was within the camera's field of view.
+
+    ```{=tex}
+    \begin{center}
+    \includegraphics[width=10cm]{images/Setup.jpg}
+    \end{center}
+    ```
+
+2.  Blue, yellow, pink, and green markers were placed on nodes 0 to 3 respectively. These colors were chosen as they stood out easily from the other colors present on the pendulum apparatus, such as the red of the arms.
+
+3.  Pendulum arm was brought to the desired initial angle (measured relative to the downwards vertical), as measure using protractor, and held until all nodes were motionless.
+
+    ```{=tex}
+    \begin{center}
+    \includegraphics[width=10cm]{images/Measuring Angles.png}
+    \end{center}
+    ```
+
+4.  Recording was started and pendulum released after a brief countdown.
+
+5.  During recording, the initial conditions were verbally announced, so that they could be manually determined from the data.
+
+6.  Pendulum was allowed to run for 15 seconds (or 45 seconds for propagation trials), then recording was stopped.
+
+7.  The above process was repeated from step 3 with initial angle adjusted in 15° increments from 0°, a motionless control run, to 180°, where the arm was oriented vertically upward and the initial energy was a maximum. For each distinct initial angle, three runs were conducted.
+
+8.  Recordings of each run were saved, and the data analysed using the method described under *Data & Analysis.*
+
+## Data and Results:
+
+```{r, echo=FALSE}
+data = read.csv("allData.csv")
+```
+
+### Tracking the nodes:
+
+Our data collection process produced approximately 10Gb of recordings.
+
+To extract the node position data from these recordings, we used a Python script of my own design. This script operated as follows:
+
+1.  The OpenCV python module was used to create a bit-wise HSV colour mask for each of the colored node stickers (and later, also the arms and masses).
+
+2.  The nodes selected b these masks were displayed at every frame to verify correct calibration.
+
+3.  The SciPy module was used to determine the median centers of the masks.
+
+4.  The x & y coordinates of each center, as will as the number of selected pixels, were saved to a raw data file. The value of -1 was used to indicate that a node could not be found on a particular frame. This occurred frequently when nodes were covered by other parts of the pendulum arms.
+
+Our initial dataset, recorded at 24 frames per second (FPS), had a severe amount of motion blur, as shown below.
+
+```{=tex}
+\begin{center}
+\includegraphics[width=7cm]{images/Blur.jpg}
+\end{center}
+```
+$$
+\pagebreak
+$$
+
+This made it almost impossible to track the nodes through the pendulum's faster motions. One attempt at this tracking is shown below.
+
+```{=tex}
+\begin{center}
+\includegraphics[width=10cm]{images/Blur Tracking.png}
+\end{center}
+```
+After re-recording our entire data-set at 120 FPS, the nodes were significantly easier to track, as the blur was now minimal. A successful tracking of the first 3 seconds of a 120° run is shown below:
+
+```{=tex}
+\begin{center}
+\includegraphics[width=10cm]{images/Good Tracking.png}
+\end{center}
+```
+### Cleaning the data:
+
+After running the node tracking script for a day and a half, we had successfully extracted the raw data from the videos. A second python script was then used to clean this data by:
+
+-   Averaging the origin node position over the entire run, and centering the coordinate system about this origin node.
+
+-   Normalizing the units of the coordinate system to be in SI units, instead of the pixel & frame coordinates output by the tracking script.
+
+-   Interpolating node data for times when a particular node was hidden behind other parts of the pendulum arm.
+
+-   Removing discrepancies caused by partially covered nodes, by only considering nodes where the number of pixels detected to be part of the node was above a certain threshold.
+
+### Analyzing the data:
+
+Comment on the precision of your measurements. Indicate main sources of\
+error, clearly explain how you estimated/calculated uncertainties.\
+Present the final form of the analysed data (e.g. final graphs, tables, bar\
+graphs, LINEST results). It should align with your aim.\
+Include the method you used to analyse the data (e.g. I plotted these two\
+variables against each other, I used Excel to fit this trend, and so on).
+
+Don't forget to include units, uncertainties, and use correct number of\
+significant figures.
+
+\
+Describe your results\
+Include tables of data and Excel plots where appropriate\
+Make sure all data has units and appropriate uncertainties\
+1-2 pages of text and diagrams
+
+## Discussion and Interpretation:
+
+Interpret the analysed data to answer the aim\
+Comment on the validity, reliability and accuracy of the data\
+Discuss your uncertainty analysis and sources of error.\
+If there are discrepancies between predictions and measurements, discuss\
+these and provide plausible explanations/justifications.\
+Any limitations of your experimental approach?\
+Connect your results to your experiment aims/hypotheses\
+\~ 1 page of text
+
+```{r, echo=FALSE}
+# Account for late starts:
+
+isSameInitConds = function(is, as) {
+    
+    if (unique(is$Type)[1] == unique(as$Type)[1] &&
+        unique(is$InitAngle)[1] == unique(as$InitAngle)[1] &&
+        unique(is$AddedMass)[1] == unique(as$AddedMass)[1]) {
+        
+        return(1) # Same init conds.
+    }
+    
+    return(0) # Not same init conds.
+}
+
+# Get an on time run with same initial conditions.
+getOnTime = function(rec) {
+    badRun = data[data$Recording == rec, ]
+    
+    for (rec in unique(data$Recording)) {
+        
+        testRun = data[data$Recording == rec, ]
+        
+        if(isSameInitConds(testRun, badRun)) {
+        
+            testLate = unique(testRun$LateStart)[1]
+            
+        
+            if (testLate == 0) {
+                return(testRun)
+            }
+        }
+    }
+}
+
+
+shifts = c()
+
+for (rec in unique(data$Recording)) {
+    run = data[data$Recording == rec, ]
+    
+    late = unique(run$LateStart)[1]
+    
+    timeshift = 0
+    
+    if (late) {
+        refRun = getOnTime(rec)
+        
+        target = run$GreenAngle[1]
+    
+        closePoints = refRun[abs(refRun$GreenAngle - target) < 0.4,]
+        
+        firstPoint = head(closePoints, 1)
+    
+        timeshift = firstPoint$Time
+
+    }
+    
+    for (row in 1:nrow(run)) {
+        shifts[length(shifts)+1] = timeshift
+    }
+}
+
+data$Timeshifts = shifts
+
+data$AdjTime = data$Time + data$Timeshifts
+
+str(data)
+```
+
+```{r, echo=FALSE}
+unique(ordered(data$InitAngle))
+```
+
+```{r, echo=FALSE}
+data$GreenPos = data$GreenDist * data$GreenAngle
+
+run = data[data$Recording == "268", ]
+run2 = data[data$Recording == "266", ]
+run3 = data[data$Recording == "267", ]
+
+
+plot(run3$AdjTime, run3$GreenPos, cex=0,
+     xlab="Time (s)", ylab="Angular displacement (m·°)")
+
+lines(run$AdjTime, run$GreenPos, col="#114411")
+lines(run2$AdjTime, run2$GreenPos, col="#11BB11")
+lines(run3$AdjTime, run3$GreenPos, col="#110011")
+```
+
+```{r, echo=FALSE}
+analysedRuns = c()
+
+
+getSameCondRuns = function(source) {
+    
+    runs = c(source)
+    
+    #print("-------")
+    
+    for (rec in unique(data$Recording)) {
+        
+        if (rec == source) {
+            next
+        }
+        
+        if (isSameInitConds(data[data$Recording == rec, ],
+                            data[data$Recording == source, ])) {
+            
+            
+            runs[length(runs)+1] = rec
+        }
+    }
+    
+    return(runs)
+}
+
+
+difSet = c()
+angSet = c()
+
+
+for (rec in unique(data$Recording)) {
+    
+    if (rec %in% analysedRuns) {
+        next
+    }
+        
+    runs = getSameCondRuns(rec)
+    
+    for (runNum in runs) {
+        analysedRuns[length(analysedRuns)+1] = runNum
+    }
+    
+    run1 = data[data$Recording == runs[1], ]
+    run2 = data[data$Recording == runs[2], ]
+    run3 = data[data$Recording == runs[3], ]
+    
+    shortest = 120 * 15 #min(nrow(run1), nrow(run2), nrow(run3))
+    
+    run1 = head(run1, shortest)
+    run2 = head(run2, shortest)
+    run3 = head(run3, shortest)
+    
+    run1$setRun = 1
+    run2$setRun = 2
+    run3$setRun = 3
+
+    run1$posDif = sqrt((run1$GreenX-run2$GreenX)^2 + (run1$GreenY-run2$GreenY)^2)
+    run2$posDif = sqrt((run2$GreenX-run3$GreenX)^2 + (run2$GreenY-run3$GreenY)^2)
+    run3$posDif = sqrt((run1$GreenX-run3$GreenX)^2 + (run1$GreenY-run3$GreenY)^2)
+    
+    totalDif = run1$posDif + run2$posDif + run3$posDif
+    
+    if (unique(run1$Type) != "angle") {
+        next
+    }
+    
+    
+    difSum = c(0)
+    
+    for (elem in totalDif) {
+        difSum[length(difSum)+1] = difSum[length(difSum)]+elem/360
+    }
+    
+    difSum = head(difSum, length(difSum)-1)
+    
+    
+    plot(run1$Time, difSum, cex=0.1, ylim=c(0, 12.5), type="l",
+         ylab="Cumulative Chaos (m²·s)", xlab="Time (s)",
+         col=rgb(unique(run1$InitAngle) / 180,
+                 0.1,
+                 1-unique(run1$InitAngle) / 180))
+    
+    par(new=T)
+    
+    difSet[length(difSet)+1] = sum(totalDif)
+    angSet[length(angSet)+1] = unique(run1$InitAngle)
+}
+```
+
+```{r, echo=FALSE}
+
+energySet = sin(angSet * (3.14159 / 360))
+
+difSet = difSet / 360
+
+#plot(angSet, difSet, xlim=c(0,180), ylim=c(0, 220000), xlab="Angle (°)", ylab="Chaos over 15 secconds (m²·s)")
+
+plot(energySet, difSet, xlim=c(0,1), ylim=c(0, 12.5), cex=0.8,
+     xlab="Initial Energy (J/kg/m)", 
+     ylab="Chaos over 15 seconds (m²·s)")
+
+
+# Uncertainty in node position:
+err = c()
+
+for (i in 1:length(angSet)) {
+    if (i < 4) {
+        err[i] = sin(angSet[i] * (3.14159 / 90))
+    } else {
+        err[i] = 0.3
+    }
+}
+
+
+segments(energySet, difSet-err, energySet, difSet+err)
+
+epsilon <- 0.006
+segments(energySet-epsilon, difSet-err, energySet+epsilon, difSet-err)
+segments(energySet-epsilon, difSet+err, energySet+epsilon, difSet+err)
+
+
+
+linearModelEnergyDif = lm(formula = difSet ~ 0+energySet)
+
+
+abline(linearModelEnergyDif, col="blue")
+
+```
+
+```{r, echo=FALSE}
+summary(linearModelEnergyDif)
+```
+
+## Conclusion:
+
+Address the aim/question based on evidence from your results.\
+Any limitations (with uncertainties) and future work\
+A few sentences.
+
+```{r}
+
+```
+
+<br>
+
+# References
