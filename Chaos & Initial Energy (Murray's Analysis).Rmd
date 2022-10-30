@@ -20,13 +20,13 @@ subtitle: Title
 
 <br>
 
-## Introduction:
+# Introduction:
 
-### Aim:
+## Aim:
 
 The aim of this experiment is to determine a quantitative measure of the chaos in the motion of a triple pendulum, and use this to determine a relationship between the extent of chaos exhibited by the pendulum, and the the total energy of the pendulum arm.
 
-### Hypothesis:
+## Hypothesis:
 
 > *The extent of chaos exhibited by the triple pendulum will be directly proportional to the total energy of the pendulum at that point in time.*
 
@@ -34,7 +34,7 @@ As the impact of frictional effects on this pendulum is very minimal, it is vali
 
 > *The extent of chaos exhibited by the triple pendulum will be directly proportional to the initial energy of the pendulum.*
 
-### Scientific basis:
+## Scientific basis:
 
 Edward Lorenz defined chaos as:
 
@@ -64,9 +64,9 @@ $$
 
 Where $\Delta t = \frac{1}{120}$ is the time between each frame.
 
-## Experimental Setup:
+# Experimental Setup:
 
-### Equipment list:
+## Equipment list:
 
 The following equipment was used in this experiment:
 
@@ -89,7 +89,7 @@ The following equipment was used in this experiment:
 \includegraphics[width=10cm]{images/Pend.png}
 \end{center}
 ```
-### Method:
+## Method:
 
 The method used to collect data in this experiment was as follows:
 
@@ -121,13 +121,13 @@ The method used to collect data in this experiment was as follows:
 
 8.  Recordings of each run were saved, and the data analysed using the method described under *Data & Analysis.*
 
-## Data and Results:
+# Data and Results:
 
 ```{r, echo=FALSE}
 data = read.csv("allData.csv")
 ```
 
-### Tracking the nodes:
+## Tracking the nodes:
 
 Our data collection process produced approximately 10Gb of recordings.
 
@@ -166,7 +166,7 @@ After re-recording our entire data-set at 120 FPS, the nodes were significantly 
 \includegraphics[width=10cm]{images/Good Tracking.png}
 \end{center}
 ```
-### Cleaning the data:
+## Cleaning the data:
 
 After running the node tracking script for a day and a half, we had successfully extracted the raw data from the videos. A second python script, and some R code, was then used to clean this data by:
 
@@ -252,36 +252,33 @@ data$AdjTime = data$Time + data$Timeshifts
 str(data)
 ```
 
-### Analyzing the data:
+$$
+\pagebreak
+$$
+
+## Analyzing the data:
 
 In order to attempt to quantify the chaos expressed by this triple pendulum, it was important to first verify that the system was, in fact, chaotic.
 
-Below are the angular displacements (calculated as angle · distance from origin)of the end node over time, for two sets of initial conditions.
-
-At 45°, we can see that the system exhibits very little chaos over the 15 second span. However, when the initial angle was set to 90°, the system became evidently chaotic after \~5 seconds.
+Below are the angular displacements (calculated as angle · distance from origin)of the end node over time, for two sets of initial conditions. At 45°, we can see that the system exhibits very little chaos over the 15 second span. However, when the initial angle was set to 90°, the system became evidently chaotic after \~5 seconds.
 
 ```{r, echo=FALSE}
 data$GreenPos = (data$GreenDist * data$GreenAngle) / 100
 
-
+par(mfrow = c(2, 1), mar = c(2, 6, 2, 2))
 
 run = data[data$Recording == "243", ]
 run2 = data[data$Recording == "244", ]
 run3 = data[data$Recording == "245", ]
 
 plot(run3$AdjTime, run3$GreenPos, cex=0, ylim=c(-1, 1), xlim=c(0, 15),
-     xlab="Time (s)", ylab="Angular displacement (m·°)", 
-     main="End node position for 45° run.")
+     xlab="Time (s)", ylab="Angular\ndisplacement (m·°)\n\n\n", 
+     main="End node position for 45° run.", mgp = c(0, 1, 0), las=2)
 
 lines(run$AdjTime, run$GreenPos, col="#114411")
 lines(run2$AdjTime, run2$GreenPos, col="#11BB11")
 lines(run3$AdjTime, run3$GreenPos, col="#110011")
 
-
-
-```
-
-```{r, echo=FALSE}
 
 run = data[data$Recording == "251", ]
 run2 = data[data$Recording == "252", ]
@@ -289,13 +286,15 @@ run3 = data[data$Recording == "253", ]
 
 
 plot(run3$AdjTime, run3$GreenPos, cex=0, ylim=c(-1.5, 1.5), xlim=c(0, 15),
-     xlab="Time (s)", ylab="Angular displacement (m·°)", 
-     main="End node position for 90° run.")
+     xlab="Time (s)", ylab="Angular\ndisplacement (m·°)\n\n\n", 
+     main="End node position for 90° run.", mgp = c(0, 1, 0), las=2)
 
 lines(run$AdjTime, run$GreenPos, col="#441111")
 lines(run2$AdjTime, run2$GreenPos, col="#991111")
 lines(run3$AdjTime, run3$GreenPos, col="#FF1111")
 ```
+
+### Measuring Chaos:
 
 We can now proceed to quantify the extent of the chaos between two runs with the same initial conditions as:
 
@@ -316,7 +315,7 @@ Where:
 We can then find the chaos for all 3 runs conducted with a given set of initial conditions as:
 
 $$
-Chaos(A, B, C) = \frac{Chaos(A, B) + Chaos(B, C) + Chaos(A, C)}{3}
+Chaos(A, B, C) = \frac{1}{3}(Chaos(A, B) + Chaos(B, C) + Chaos(A, C))
 $$
 
 Below is the cumulative chaos, calculated using the above formula, for the first $t=15$ seconds of the run set for each of the initial angles tested. Large angles are denoted in red, smaller angles in blue.
@@ -412,6 +411,40 @@ for (rec in unique(data$Recording)) {
 }
 ```
 
+The uncertainty $\Delta C$ for this measurement of chaos can be calculated as follows:
+
+$$
+\Delta C = \Delta t \cdot \sqrt{(2\Delta x)^2 + (2\Delta y)^2}
+$$
+
+Where:
+
+-   $\Delta t = \frac{0.5}{120} \approx 0.004s$ is the uncertainty in the current time, due to the 120 frames / second frame rate of the camera used.
+
+-   $\Delta x$ and $\Delta y$ are the uncertainties in the coordinates of the nodes. The python script used was able to pinpoint the node locations to an precicion of much less than one pixel by taxing the average of all \~16000 pixels masked as part of the node. Hence, this uncertainty, and by extension $\Delta C$ is negligible.
+
+### Measuring Initial Energy:
+
+Initial energy was measured on a scale from 0, where the pendulum was at rest (0°), to 1, where the pendulum was raised vertically (180°), and hence had a maximum initial gravitational potential energy. Using this unit scale, initial energy $E_0$ could be calculated as:
+
+$$
+E_0 = \sin(\frac{\theta}{2})
+$$
+
+The uncertainty $\Delta E_0$ in this initial energy is then simply $\sin(\frac{\Delta \theta}{2})$, where $\Delta \theta$ is the uncertainty in the initial angle $\theta$.
+
+For our lower angle runs ($\theta \leq 45^{\circ}$) this uncertainty was quite significant, as the protractor we used had a secondary scale that was not in degrees, but rather mapped 180° to a value of 200. We did not realize this until the first of the 60° trials, and hence we were unsure which scale we had used for the earlier runs. After realising this, we made certain to use the degrees scale, which had half degree increments. So:
+
+$$
+\Delta \theta=    
+    \begin{cases}        
+        1^{\circ} + \frac{200}{180^{\circ}}\theta  & \text{if } \theta \leq 45^{\circ} \\        
+        1^{\circ}  & \text{if } \theta > 45^{\circ} 
+    \end{cases}
+$$
+
+After mapping these uncertainties to the $y$ axis, we can produce the following graph of the cumulative chaos over 15 seconds vs. initial energy of the pendulum:
+
 ```{r, echo=FALSE}
 
 energySet = sin(angSet * (3.14159 / 360))
@@ -422,7 +455,8 @@ difSet = difSet / 360
 
 plot(energySet, difSet, xlim=c(0,1), ylim=c(0, 12.5), cex=0.8,
      xlab="Initial Energy (J/kg/m)", 
-     ylab="Chaos over 15 seconds (m²·s)")
+     ylab="Chaos over 15 seconds (m²·s)",
+     main="The effect of initial energy on chaos over 15s.")
 
 
 # Uncertainty in node position:
@@ -436,7 +470,6 @@ for (i in 1:length(angSet)) {
     }
 }
 
-
 segments(energySet, difSet-err, energySet, difSet+err)
 
 epsilon <- 0.006
@@ -444,54 +477,46 @@ segments(energySet-epsilon, difSet-err, energySet+epsilon, difSet-err)
 segments(energySet-epsilon, difSet+err, energySet+epsilon, difSet+err)
 
 
-
 linearModelEnergyDif = lm(formula = difSet ~ 0+energySet)
 
-
 abline(linearModelEnergyDif, col="blue")
-
 ```
 
-Comment on the precision of your measurements. Indicate main sources of\
-error, clearly explain how you estimated/calculated uncertainties.
+From the above graph, it is clear that there is a linear relationship between initial energy and chaos, for this triple pendulum with constant moments of inertia, as we had originally hypothesized.
 
-\
-Present the final form of the analysed data (e.g. final graphs, tables, bar\
-graphs, LINEST results). It should align with your aim.
+# Discussion and Interpretation:
 
-\
-Include the method you used to analyse the data (e.g. I plotted these two\
-variables against each other, I used Excel to fit this trend, and so on).
+## Analyzing the results:
 
-Don't forget to include units, uncertainties, and use correct number of\
-significant figures.
+The aim of this experiment was to determine a relationship between chaos exhibited by a triple pendulum, and total energy of the pendulum. Ignoring the minimal effect of friction, we have taken the energy of the pendulum throughout the run as a constant, equal to the initial gravitational potential energy of the arm, and proven that there is a clear, linear relationship between chaos and energy.
 
-\
-Describe your results\
-Include tables of data and Excel plots where appropriate\
-Make sure all data has units and appropriate uncertainties\
-1-2 pages of text and diagrams
-
-## Discussion and Interpretation:
-
-Interpret the analysed data to answer the aim\
-Comment on the validity, reliability and accuracy of the data\
-Discuss your uncertainty analysis and sources of error.\
-If there are discrepancies between predictions and measurements, discuss\
-these and provide plausible explanations/justifications.\
-Any limitations of your experimental approach?\
-Connect your results to your experiment aims/hypotheses\
-\~ 1 page of text
+We can quantify the statistical significance of this relationship by performing a t test for correlation:
 
 ```{r, echo=FALSE}
 summary(linearModelEnergyDif)
 ```
 
-## Conclusion:
+This test shows us a P value $\approx 3 \cdot 10^{-11}$, indicating an extremely strong linear correlation between chaos and energy. This result aligns with our hypothesis.
 
-Address the aim/question based on evidence from your results.\
-Any limitations (with uncertainties) and future work\
-A few sentences.
+## Validity, reliability and accuracy of the data:
+
+Whilst we do not have a predicted theoretical value of formula with which to compare our results, as any such formula would have to be highly specific to the system in question, it is reasonable to conclude that out data is accurate, as our uncertainties *(discussed under measurement)* were minimal, and our experimental method was carefully considered to ensure that our data was collected in a valid manner.
+
+Additionally, by conducting three tests for each set of initial conditions, we were able to observe that our results were relatively consistent between 3 comparisons of chaos, and ensure our results were reliable.
+
+## Limitations of experimental approach:
+
+Our final experimental approach was highly successful at collecting reliable and valid data for use in our analysis. We did, however, modify aspects of this approach over the course of this experiment in order to mitigate the following limitations of our preliminary data set:
+
+-   The frame rate of the recording was raised from 24 FPS to 120 FPS to reduce the effects of motion blur, discussed further under *Tracking the Nodes*. All of our data was retaken after this modification.
+
+-   Our protractor was changed for one with only a single scale in degrees, to avoid confusion in the initial angle measurement. Discussed further under *Measuring Initial Energy*.
+
+# Conclusion:
+
+In conclusion, our experiment was highly successful at quantifying the relationship between chaos and system energy for a triple pendulum. We were able to define a robust mathematical measure of chaos in the system, and relate this linearly to initial energy with a correlation coefficient of 0.9986.
+
+Further aspects for investigation could include the point in time at which the system becomes chaotic, on analysis of the effect of changing the moment of inertia of the arm.
 
 ```{r}
 
