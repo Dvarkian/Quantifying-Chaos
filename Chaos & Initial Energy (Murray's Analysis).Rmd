@@ -152,7 +152,7 @@ $$
 \pagebreak
 $$
 
-This made it almost impossible to track the nodes through the pendulum's faster motions. One attempt at this tracking is shown below.
+Whilst this was not a major issue for low angle tests, the blur made it almost impossible to track the nodes through the pendulum's faster motions. One attempt at this tracking is shown below.
 
 ```{=tex}
 \begin{center}
@@ -168,7 +168,7 @@ After re-recording our entire data-set at 120 FPS, the nodes were significantly 
 ```
 ### Cleaning the data:
 
-After running the node tracking script for a day and a half, we had successfully extracted the raw data from the videos. A second python script was then used to clean this data by:
+After running the node tracking script for a day and a half, we had successfully extracted the raw data from the videos. A second python script, and some R code, was then used to clean this data by:
 
 -   Averaging the origin node position over the entire run, and centering the coordinate system about this origin node.
 
@@ -178,34 +178,9 @@ After running the node tracking script for a day and a half, we had successfully
 
 -   Removing discrepancies caused by partially covered nodes, by only considering nodes where the number of pixels detected to be part of the node was above a certain threshold.
 
-### Analyzing the data:
+-   Applying time shifts to some of the runs to account for the pendulum's release not precisely aligning with the start of the recording.
 
-Comment on the precision of your measurements. Indicate main sources of\
-error, clearly explain how you estimated/calculated uncertainties.\
-Present the final form of the analysed data (e.g. final graphs, tables, bar\
-graphs, LINEST results). It should align with your aim.\
-Include the method you used to analyse the data (e.g. I plotted these two\
-variables against each other, I used Excel to fit this trend, and so on).
-
-Don't forget to include units, uncertainties, and use correct number of\
-significant figures.
-
-\
-Describe your results\
-Include tables of data and Excel plots where appropriate\
-Make sure all data has units and appropriate uncertainties\
-1-2 pages of text and diagrams
-
-## Discussion and Interpretation:
-
-Interpret the analysed data to answer the aim\
-Comment on the validity, reliability and accuracy of the data\
-Discuss your uncertainty analysis and sources of error.\
-If there are discrepancies between predictions and measurements, discuss\
-these and provide plausible explanations/justifications.\
-Any limitations of your experimental approach?\
-Connect your results to your experiment aims/hypotheses\
-\~ 1 page of text
+Once the data for each run was cleaned, it was compiled into a single 50Mb .csv data file, containing node coordinates, in both Cartesian and polar form, for every node at every frame of every run. The full structure of this data-set, including all measured and calculated variables, is shown below:
 
 ```{r, echo=FALSE}
 # Account for late starts:
@@ -277,29 +252,77 @@ data$AdjTime = data$Time + data$Timeshifts
 str(data)
 ```
 
-```{r, echo=FALSE}
-unique(ordered(data$InitAngle))
-```
+### Analyzing the data:
+
+In order to attempt to quantify the chaos expressed by this triple pendulum, it was important to first verify that the system was, in fact, chaotic.
+
+Below are the angular displacements (calculated as angle · distance from origin)of the end node over time, for two sets of initial conditions.
+
+At 45°, we can see that the system exhibits very little chaos over the 15 second span. However, when the initial angle was set to 90°, the system became evidently chaotic after \~5 seconds.
 
 ```{r, echo=FALSE}
-data$GreenPos = data$GreenDist * data$GreenAngle
-
-run = data[data$Recording == "268", ]
-run2 = data[data$Recording == "266", ]
-run3 = data[data$Recording == "267", ]
+data$GreenPos = (data$GreenDist * data$GreenAngle) / 100
 
 
-plot(run3$AdjTime, run3$GreenPos, cex=0,
-     xlab="Time (s)", ylab="Angular displacement (m·°)")
+
+run = data[data$Recording == "243", ]
+run2 = data[data$Recording == "244", ]
+run3 = data[data$Recording == "245", ]
+
+plot(run3$AdjTime, run3$GreenPos, cex=0, ylim=c(-1, 1), xlim=c(0, 15),
+     xlab="Time (s)", ylab="Angular displacement (m·°)", 
+     main="End node position for 45° run.")
 
 lines(run$AdjTime, run$GreenPos, col="#114411")
 lines(run2$AdjTime, run2$GreenPos, col="#11BB11")
 lines(run3$AdjTime, run3$GreenPos, col="#110011")
+
+
+
 ```
 
 ```{r, echo=FALSE}
-analysedRuns = c()
 
+run = data[data$Recording == "251", ]
+run2 = data[data$Recording == "252", ]
+run3 = data[data$Recording == "253", ]
+
+
+plot(run3$AdjTime, run3$GreenPos, cex=0, ylim=c(-1.5, 1.5), xlim=c(0, 15),
+     xlab="Time (s)", ylab="Angular displacement (m·°)", 
+     main="End node position for 90° run.")
+
+lines(run$AdjTime, run$GreenPos, col="#441111")
+lines(run2$AdjTime, run2$GreenPos, col="#991111")
+lines(run3$AdjTime, run3$GreenPos, col="#FF1111")
+```
+
+We can now proceed to quantify the extent of the chaos between two runs with the same initial conditions as:
+
+$$
+Chaos(A, B) = \frac{t}{120} \cdot \sum_{k=0}^{120 t}{\sqrt{(x_{A, k} - x_{B, k})^2 + (y_{A, k} - y_{B, k})^2}}
+$$
+
+Where:
+
+-   $120$ was the frame-rate used.
+
+-   $k$ is the current frame.
+
+-   $t$ is the length of the run in seconds,
+
+-   $x_{A,k}$ is the $x$ coordinate of the end node, relative to the origin node, at frame $k$ of the first of the two runs being compared.
+
+We can then find the chaos for all 3 runs conducted with a given set of initial conditions as:
+
+$$
+Chaos(A, B, C) = \frac{Chaos(A, B) + Chaos(B, C) + Chaos(A, C)}{3}
+$$
+
+Below is the cumulative chaos, calculated using the above formula, for the first $t=15$ seconds of the run set for each of the initial angles tested. Large angles are denoted in red, smaller angles in blue.
+
+```{r, echo=FALSE}
+analysedRuns = c()
 
 getSameCondRuns = function(source) {
     
@@ -377,6 +400,7 @@ for (rec in unique(data$Recording)) {
     
     plot(run1$Time, difSum, cex=0.1, ylim=c(0, 12.5), type="l",
          ylab="Cumulative Chaos (m²·s)", xlab="Time (s)",
+         main="Cumulative chaos over time for runs at each initial angle.",
          col=rgb(unique(run1$InitAngle) / 180,
                  0.1,
                  1-unique(run1$InitAngle) / 180))
@@ -427,6 +451,37 @@ linearModelEnergyDif = lm(formula = difSet ~ 0+energySet)
 abline(linearModelEnergyDif, col="blue")
 
 ```
+
+Comment on the precision of your measurements. Indicate main sources of\
+error, clearly explain how you estimated/calculated uncertainties.
+
+\
+Present the final form of the analysed data (e.g. final graphs, tables, bar\
+graphs, LINEST results). It should align with your aim.
+
+\
+Include the method you used to analyse the data (e.g. I plotted these two\
+variables against each other, I used Excel to fit this trend, and so on).
+
+Don't forget to include units, uncertainties, and use correct number of\
+significant figures.
+
+\
+Describe your results\
+Include tables of data and Excel plots where appropriate\
+Make sure all data has units and appropriate uncertainties\
+1-2 pages of text and diagrams
+
+## Discussion and Interpretation:
+
+Interpret the analysed data to answer the aim\
+Comment on the validity, reliability and accuracy of the data\
+Discuss your uncertainty analysis and sources of error.\
+If there are discrepancies between predictions and measurements, discuss\
+these and provide plausible explanations/justifications.\
+Any limitations of your experimental approach?\
+Connect your results to your experiment aims/hypotheses\
+\~ 1 page of text
 
 ```{r, echo=FALSE}
 summary(linearModelEnergyDif)
