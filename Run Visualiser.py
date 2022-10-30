@@ -62,7 +62,7 @@ def center(mask):
 
 
 
-for recording in range(259, 275):
+for recording in range(249, 275):
 
 
     n = 0
@@ -137,10 +137,10 @@ for recording in range(259, 275):
 
         arms = cv2.add(bronze, red)
 
-        cv2.circle(showNodes, (int(greenX), int(greenY)), 3, (0, 255, 0), 3)
-        cv2.circle(showNodes, (int(blueX), int(blueY)), 3, (255, 0, 0), 3)
-        cv2.circle(showNodes, (int(yellowX), int(yellowY)), 3, (0, 255, 255), 3)
-        cv2.circle(showNodes, (int(pinkX), int(pinkY)), 3, (100, 100, 255), 3)
+        #cv2.circle(showNodes, (int(greenX), int(greenY)), 3, (0, 255, 0), 3)
+        #cv2.circle(showNodes, (int(blueX), int(blueY)), 3, (255, 0, 0), 3)
+        #cv2.circle(showNodes, (int(yellowX), int(yellowY)), 3, (0, 255, 255), 3)
+        #cv2.circle(showNodes, (int(pinkX), int(pinkY)), 3, (100, 100, 255), 3)
         
 
         cv2.namedWindow("det", cv2.WINDOW_NORMAL)
@@ -153,10 +153,12 @@ for recording in range(259, 275):
         nodeTrails = cv2.addWeighted(nodeTrails, 1, showNodes, 0.4, 0)
 
         display = cv2.addWeighted(nodeTrails, 1, arms, 0.5, 0)
+
+        showNodes = cv2.addWeighted(showNodes, 1, arms, 0.5, 0)
         
-        cv2.imshow('det', display) # to display the blue object output
+        #cv2.imshow('det', display) # to display the blue object output
         #cv2.imshow('det', nodeTrails) # to display the blue object output
-        #cv2.imshow('det', showNodes) # to display the blue object output
+        cv2.imshow('det', showNodes) # to display the blue object output
 
 
 

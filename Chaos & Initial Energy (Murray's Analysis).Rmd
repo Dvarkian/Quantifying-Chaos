@@ -24,52 +24,107 @@ subtitle: Title
 
 ### Aim:
 
-The aim of this experiment is to determine a quantitative measure of the chaos in the motion of a triple pendulum, and use this to determine a relationship between the extent of chaos exhibited by the pendulum, and the the initial potential energy of the pendulum arm.
+The aim of this experiment is to determine a quantitative measure of the chaos in the motion of a triple pendulum, and use this to determine a relationship between the extent of chaos exhibited by the pendulum, and the the total energy of the pendulum arm.
 
 ### Hypothesis:
 
-The extent of chaos exhibited by the triple pendulum will be directly proportional to the initial energy of the pendulum.
+> *The extent of chaos exhibited by the triple pendulum will be directly proportional to the total energy of the pendulum at that point in time.*
 
-### Measurable variables:
+As the impact of frictional effects on this pendulum is very minimal, it is valid to assume that the total energy of the pendulum will remain approximately constant throughout a run with duration of \~15 seconds. Hence, as the initial energy of the pendulum arm is entirely in the form of gravitational potential energy, we can adapt the hypothesis to suit this easier to measure parameter as follows:
+
+> *The extent of chaos exhibited by the triple pendulum will be directly proportional to the initial energy of the pendulum.*
 
 ### Scientific basis:
 
 Edward Lorenz defined chaos as:
 
-> *When the present determines the future, but the approximate present does not approximately determine the future.*
+> ***When the present determines the future, but the approximate present does not approximately determine the future.***
 
 Based on this definition, we can conclude that the extent of chaos expressed by a system over time can be measured as the difference in paths taken by a system over multiple trials whose initial conditions are approximately the same.
 
-Double and triple pendula are classic examples of chaotic systems.
+Consider the first four frames of a pendulum run, taken at equal intervals:
 
-Initially, all the energy of the pendulum arm is in the form of gravitational potential energy. \
+```{=tex}
+\begin{center}
+\includegraphics[width=10cm]{images/A.png}
+\end{center}
+```
+We can the conduct a second run with approximate the same initial conditions, and measure the difference between the end node positions $x$ at each frame $x_n$:
 
-Refer to your measurable variables consistent with later analysis\
-\~1-2 sentences of text
+```{=tex}
+\begin{center}
+\includegraphics[width=10cm]{images/B.png}
+\end{center}
+```
+Hence, based of our above definition, it is valid to describe a measure of chaos for this system as:
 
-\
-Scientific basis for study presented that reflects synthesis of research\
-Including references to relevant journal papers and your own knowledge of\
-physics
+$$
+Chaos = \Delta t \cdot \sum_{k=0}^{n}{x_k}
+$$
 
-\
-Include relevant equations and concepts\
-Insightful context of the experiment and scientific basis\
-What is the issue or problem your experiment addresses?
+Where $\Delta t = \frac{1}{120}$ is the time between each frame.
 
-\
-0.5 page
+## Experimental Setup:
 
-## Experimental Setup and Method:
+### Equipment list:
 
-Provide a list of equipment, and variables that were measured\
-Describe your experimental method including calculating uncertainties\
-Include diagrams where appropriate\
-The reader should be able to reproduce your method\
-Bullet points are OK, but use full sentences\
-1-- 2 pages of text and diagram
+The following equipment was used in this experiment:
 
+-   Weighted triple pendulum *(shown below)*, with an arm length of 120mm, as measured between the centers of any two consecutive nodes.
+
+-   Four different brightly colored stickers.
+
+-   Sony A7C full-camera using a 24mm, f2.8 lens, at aperture f5.6. Capable of recording footage at 4K resolution, with 120 frames per second.
+
+-   Scales with 0.1g precision.
+
+-   Protractor with 0.5° precision, and a hanging bob to reference the vertical direction.
+
+-   Tape measure & meter ruler with 1mm precision.
+
+-   White paper and masking tape to cover reflective parts of pendulum *(see experimental setup diagram)*.
+
+```{=tex}
+\begin{center}
+\includegraphics[width=10cm]{images/Pend.png}
+\end{center}
+```
+### Method:
+
+The method used to collect data in this experiment was as follows:
+
+1.  Camera and pendulum were set up in front of blank white wall, with good lighting, such that the camera's field of view was centered on the origin node (to reduce parallax error), and the lens of the camera was placed 1.2m horizontally from the origin node, such that the whole range of motion of the pendulum was within the camera's field of view.
+
+2.  Blue, yellow, pink, and green markers were placed on nodes 0 to 3 respectively. These colors were chosen as they stood out easily from the other colors present on the pendulum apparatus, such as the red of the arms.
+
+3.  Pendulum arm was brought to the desired initial angle, as measure using protractor, and held until all nodes were motionless.
+
+4.  Recording was started and pendulum released after a brief countdown.
+
+5.  During recording, the initial conditions were verbally announced, so that they could be manually determined from the data.
+
+6.  Pendulum was allowed to run for 15 seconds (or 45 seconds for propagation trials), then recording was stopped.
+
+7.  The above process was repeated from step 3 with initial angle adjusted in 15° increments from 0°, a motionless control run, to 180°, where the arm was oriented vertically upward and the initial energy was a maximum. For each distinct initial angle, three runs were conducted.
+
+8.  Recordings of each run were saved, and the data analysed using the method described under *Data & Analysis.*
+
+```{=tex}
+\begin{center}
+\includegraphics[width=10cm]{images/Setup.jpg}
+\end{center}
+```
 ## Data and Results:
+
+```{r, echo=FALSE}
+data = read.csv("allData.csv")
+```
+
+### Tracking the nodes:
+
+Our data collection process produced approximately 10Gb of recordings. In order to extract the node position data from these
+
+### Analyzing the data:
 
 Comment on the precision of your measurements. Indicate main sources of\
 error, clearly explain how you estimated/calculated uncertainties.\
@@ -79,7 +134,9 @@ Include the method you used to analyse the data (e.g. I plotted these two\
 variables against each other, I used Excel to fit this trend, and so on).
 
 Don't forget to include units, uncertainties, and use correct number of\
-significant figures.\
+significant figures.
+
+\
 Describe your results\
 Include tables of data and Excel plots where appropriate\
 Make sure all data has units and appropriate uncertainties\
@@ -95,10 +152,6 @@ these and provide plausible explanations/justifications.\
 Any limitations of your experimental approach?\
 Connect your results to your experiment aims/hypotheses\
 \~ 1 page of text
-
-```{r, echo=FALSE}
-data = read.csv("allData.csv")
-```
 
 ```{r, echo=FALSE}
 # Account for late starts:
@@ -171,7 +224,7 @@ str(data)
 ```
 
 ```{r, echo=FALSE}
-unique(data$InitAngle)
+unique(ordered(data$InitAngle))
 ```
 
 ```{r, echo=FALSE}
