@@ -107,7 +107,7 @@ The method used to collect data in this experiment was as follows:
 
     ```{=tex}
     \begin{center}
-    \includegraphics[width=10cm]{images/Measuring Angles.png}
+    \includegraphics[width=6cm]{images/Measuring Angles.png}
     \end{center}
     ```
 
@@ -145,7 +145,7 @@ Our initial dataset, recorded at 24 frames per second (FPS), had a severe amount
 
 ```{=tex}
 \begin{center}
-\includegraphics[width=7cm]{images/Blur.jpg}
+\includegraphics[width=6cm]{images/Blur.jpg}
 \end{center}
 ```
 $$
