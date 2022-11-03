@@ -419,7 +419,7 @@ $$
 
 Where:
 
--   $\Delta t = \frac{0.5}{120} \approx 0.004s$ is the uncertainty in the current time, due to the 120 frames / second frame rate of the camera used.
+-   $\Delta t = \frac{1}{120} \approx 0.008s$ is the uncertainty in the current time, due to the 120 frames / second frame rate of the camera used.
 
 -   $\Delta x$ and $\Delta y$ are the uncertainties in the coordinates of the nodes. The python script used was able to pinpoint the node locations to an precicion of much less than one pixel by taxing the average of all \~16000 pixels masked as part of the node. Hence, this uncertainty, and by extension $\Delta C$ is negligible.
 
