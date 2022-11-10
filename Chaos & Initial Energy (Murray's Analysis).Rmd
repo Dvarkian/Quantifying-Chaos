@@ -1,7 +1,7 @@
 ---
 title: "Quantifying Chaos"
 author: "Murray Jones (520487532)"
-date: "University of Sydney | PHYS1902 | Lab Class X"
+date: "University of Sydney | PHYS1902 | Lab Class Friday 2pm"
 output:
   pdf_document:
     toc: yes
@@ -522,6 +522,16 @@ Further aspects for investigation could include the point in time at which the s
 
 ```
 
-<br>
+$$
+\pagebreak
+$$
 
 # References
+
+1.  Levien RB, Tan SM. Double pendulum: An experiment in chaos. American Journal of Physics. 1993;61(11):1038-44.
+
+2.  Litak G, Borowiec M, Dabek K. The Transition to Chaos of Pendulum Systems. Applied Sciences. 2022;12(17):8876.
+
+3.  Lückemann P, Forrester S, Mears A, Shepherd J, Roberts J. Assessment of Measurement Uncertainty in Optical Marker Tracking of High-Speed Motion. Proceedings. 2020;49(1):72.
+
+4.  Skurowski P, Pawlyta M. On the Noise Complexity in an Optical Motion Capture Facility. Sensors (Basel). 2019;19(20).
