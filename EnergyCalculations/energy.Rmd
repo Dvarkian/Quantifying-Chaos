@@ -1,0 +1,56 @@
+---
+title: "energy"
+author: "Riley"
+date: '2022-11-01'
+output: html_document
+---
+
+```{r setup, include=FALSE, error=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse, warn.conflicts = FALSE)
+library(ggplot2, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
+```
+
+```{r, echo=FALSE}
+data = read.csv("../allData.csv")
+```
+
+# ToDo
+# 1. Read the propogation data
+# 2. determine velocity
+# 3. determine angular velocity
+# 4. determine centre of mass position
+# 5. calculate the kenetic energy
+# 6. calculate the rotational energy
+# 7. calculate the gravitational energy
+# 8. calculate the total energy of each stage
+# 9. graph the energy for each stage against time for several angles
+
+
+```{r}
+dim(data)
+energy_d <- data %>% filter(Type == "prop") %>% filter(Time > 5)
+str(energy_d)
+dim(energy_d)
+
+```
+
+
+#Velocity calculations
+```{r}
+yVelocity = c()
+pVelocity = c()
+GVelocity = c()
+
+for (rec in unique(energy_d$Recording)) {
+    run <- energy_d %>% filter(Recording == rec)
+ 
+    for (i in 1:nrow(run)) {
+      yVelocity[length(yVeloctiy)+1] = run[i,run$YellowX]
+    }
+}
+
+data$YellowVel = yVelocity
+
+```
